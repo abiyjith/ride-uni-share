@@ -18,7 +18,7 @@ const RegistrationForm = () => {
     role: '',
     collegeId: '',
     phoneNumber: '',
-    profilePicture: null as File | null,
+    collegeIdDocument: null as File | null,
     acceptTerms: false,
   });
 
@@ -59,6 +59,10 @@ const RegistrationForm = () => {
       newErrors.phoneNumber = 'Phone number is required';
     }
 
+    if (!formData.collegeIdDocument) {
+      newErrors.collegeIdDocument = 'College ID document is required for verification';
+    }
+
     if (!formData.acceptTerms) {
       newErrors.acceptTerms = 'Please accept the terms and conditions';
     }
@@ -91,7 +95,10 @@ const RegistrationForm = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFormData(prev => ({ ...prev, profilePicture: file }));
+      setFormData(prev => ({ ...prev, collegeIdDocument: file }));
+      if (errors.collegeIdDocument) {
+        setErrors(prev => ({ ...prev, collegeIdDocument: '' }));
+      }
     }
   };
 
@@ -239,23 +246,29 @@ const RegistrationForm = () => {
             )}
           </div>
 
-          {/* Profile Picture Upload */}
+          {/* College ID Document Upload */}
           <div className="space-y-2">
-            <Label htmlFor="profilePicture" className="flex items-center gap-2">
+            <Label htmlFor="collegeIdDocument" className="flex items-center gap-2">
               <Upload className="w-4 h-4" />
-              Profile Picture (Optional)
+              College ID Document *
             </Label>
             <Input
-              id="profilePicture"
+              id="collegeIdDocument"
               type="file"
-              accept="image/*"
+              accept="image/*,.pdf"
               onChange={handleFileChange}
-              className="cursor-pointer"
+              className={`cursor-pointer ${errors.collegeIdDocument ? 'border-destructive' : ''}`}
             />
-            {formData.profilePicture && (
-              <p className="text-sm text-muted-foreground">
-                Selected: {formData.profilePicture.name}
+            <p className="text-xs text-muted-foreground">
+              Upload a clear photo of your student/employee ID card or official college document (JPG, PNG, PDF)
+            </p>
+            {formData.collegeIdDocument && (
+              <p className="text-sm text-trust font-medium">
+                ✓ Selected: {formData.collegeIdDocument.name}
               </p>
+            )}
+            {errors.collegeIdDocument && (
+              <p className="text-sm text-destructive">{errors.collegeIdDocument}</p>
             )}
           </div>
 
